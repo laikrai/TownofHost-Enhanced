@@ -8,6 +8,7 @@ namespace TOHE.Roles.AddOns.Common;
 
 public class Oiiai : IAddon
 {
+    public CustomRoles Role => CustomRoles.Oiiai;
     private const int Id = 25700;
     private readonly static List<byte> playerIdList = [];
     public static bool IsEnable = false;
@@ -17,6 +18,7 @@ public class Oiiai : IAddon
     private static OptionItem CanPassOn;
     private static OptionItem ChangeNeutralRole;
 
+    [Obfuscation(Exclude = true)]
     private enum ChangeRolesSelectList
     {
         Role_NoChange,
@@ -43,12 +45,15 @@ public class Oiiai : IAddon
     }
     public void Add(byte playerId, bool gameIsLoading = true)
     {
-        playerIdList.Add(playerId);
+        if (!playerIdList.Contains(playerId))
+            playerIdList.Add(playerId);
+
         IsEnable = true;
     }
     public static void PassOnKiller(byte playerId)
     {
-        playerIdList.Add(playerId);
+        if (!playerIdList.Contains(playerId))
+            playerIdList.Add(playerId);
         IsEnable = true;
     }
     public void Remove(byte playerId)
@@ -91,10 +96,27 @@ public class Oiiai : IAddon
             Logger.Info($"Oiiai {killer.GetNameWithRole().RemoveHtmlTags()} cannot eraser crew imp-based role", "Oiiai");
             return;
         }
+        else if (killer.GetCustomRole().IsCoven() && !CovenManager.HasNecronomicon(killer))
+        {
+            killer.RpcChangeRoleBasis(CustomRoles.Amnesiac);
+            killer.RpcSetCustomRole(CustomRoles.Amnesiac);
+            killer.RpcSetCustomRole(CustomRoles.Enchanted);
+            killer.AddInSwitchAddons(killer, CustomRoles.Enchanted);
+            Logger.Info($"Oiiai {killer.GetNameWithRole().RemoveHtmlTags()} with Coven without Necronomicon.", "Oiiai");
+        }
+        else if (CovenManager.HasNecronomicon(killer))
+        {
+            // Necronomicon holder immune to Oiiai
+            Logger.Info($"Oiiai {killer.GetNameWithRole().RemoveHtmlTags()} with Coven with Necronomicon.", "Oiiai");
+        }
         else if (!killer.GetCustomRole().IsNeutral())
         {
+            var readyrole = Eraser.GetErasedRole(killer.GetCustomRole().GetRoleTypes(), killer.GetCustomRole());
             //Use eraser here LOL
-            killer.RpcSetCustomRole(Eraser.GetErasedRole(killer.GetCustomRole().GetRoleTypes(), killer.GetCustomRole()));
+            killer.GetRoleClass()?.OnRemove(killer.PlayerId);
+            killer.RpcChangeRoleBasis(readyrole);
+            killer.RpcSetCustomRole(readyrole);
+            killer.GetRoleClass()?.OnAdd(killer.PlayerId);
             Logger.Info($"Oiiai {killer.GetNameWithRole().RemoveHtmlTags()} with eraser assign.", "Oiiai");
         }
         else
@@ -106,6 +128,7 @@ public class Oiiai : IAddon
                 if (changeValue != 0)
                 {
                     killer.GetRoleClass().OnRemove(killer.PlayerId);
+                    killer.RpcChangeRoleBasis(NRoleChangeRoles[changeValue - 1]);
                     killer.RpcSetCustomRole(NRoleChangeRoles[changeValue - 1]);
                     killer.GetRoleClass().OnAdd(killer.PlayerId);
 
@@ -116,7 +139,10 @@ public class Oiiai : IAddon
             }
             else
             {
+                killer.GetRoleClass().OnRemove(killer.PlayerId);
+                killer.RpcChangeRoleBasis(CustomRoles.Opportunist);
                 killer.RpcSetCustomRole(CustomRoles.Opportunist);
+                killer.GetRoleClass().OnAdd(killer.PlayerId);
                 Logger.Info($"Oiiai {killer.GetNameWithRole().RemoveHtmlTags()} with Neutrals without kill button assign.", "Oiiai");
             }
         }
