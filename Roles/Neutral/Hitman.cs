@@ -12,6 +12,7 @@ namespace TOHE.Roles.Neutral
     internal class Hitman : RoleBase
     {
         //===========================SETUP================================\\
+        public override CustomRoles Role => CustomRoles.Hitman;
         private const int Id = 31200;
         public static byte? PlayerId;
         public static bool HasEnabled => PlayerId.HasValue;
@@ -23,7 +24,7 @@ namespace TOHE.Roles.Neutral
         private static OptionItem HitmanCanVent;
         private static OptionItem HitmanHasImpostorVision;
         private static OptionItem HitmanArrowTowardsTarget;
-        private static OptionItem HitmanKillsNeeded;
+        public static OptionItem HitmanKillsNeeded;
         private static OptionItem HitmanCanGetATargetAfterKillsNeeded;
         private static OptionItem TryHideMsg;
 
@@ -63,7 +64,7 @@ namespace TOHE.Roles.Neutral
             AbilityLimit = 0;
             Main.AllPlayerKillCooldown[playerId] = 300f;
         }
-        public override bool CanUseKillButton(PlayerControl pc) => true;
+        public override bool CanUseKillButton(PlayerControl pc) => AbilityLimit >= HitmanKillsNeeded.GetInt() ? HitmanCanGetATargetAfterKillsNeeded.GetBool() ? true : false : true;
         public override void ApplyGameOptions(IGameOptions opt, byte playerId) => opt.SetVision(HitmanHasImpostorVision.GetBool());
         public override void SetKillCooldown(byte id) => Main.AllPlayerKillCooldown[id] = HitmanKillCooldown.GetFloat();
         public override bool CanUseImpostorVentButton(PlayerControl pc) => HitmanCanVent.GetBool();
@@ -107,7 +108,13 @@ namespace TOHE.Roles.Neutral
         public override string GetProgressText(byte playerId, bool comms) => Utils.ColorString(Utils.GetRoleColor(CustomRoles.Hitman).ShadeColor(0.25f), $"({AbilityLimit}/{HitmanKillsNeeded.CurrentValue})");
         public override bool OnCheckMurderAsKiller(PlayerControl killer, PlayerControl target)
         {
-            if (target.PlayerId != TargetPlayerId) return false;
+            if (target.PlayerId != TargetPlayerId)
+            {
+                killer.RpcGuardAndKill(target);
+                killer.Notify(Translator.GetString("HitmanWrongTarget"));
+                killer.ResetKillCooldown();
+                return false;
+            }
             AbilityLimit++;
             SendSkillRPC();
             GetProgressText(PlayerId.Value, false);

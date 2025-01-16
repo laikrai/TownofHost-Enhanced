@@ -850,7 +850,6 @@ public enum CustomRoles
     Glitch,
     God,
     Hater,
-    HexMaster,
     Hitman,
     Huntsman,
     Imitator,
