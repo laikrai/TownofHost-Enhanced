@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using TOHE.Modules;
 using TOHE.Modules.ChatManager;
+using TOHE.Roles.AddOns.Common;
 using TOHE.Roles.Core;
 using TOHE.Roles.Core.AssignManager;
 using TOHE.Roles.Coven;
@@ -79,6 +80,8 @@ internal class ChatCommands
         {
             goto Canceled;
         }
+        if (PlayerControl.LocalPlayer.Is(CustomRoles.Yapper))
+            Yapper.ResetTimer(PlayerControl.LocalPlayer.PlayerId);
         switch (args[0])
         {
             case "/dump":
@@ -2117,7 +2120,8 @@ internal class ChatCommands
             canceled = true;
             return;
         }
-
+        if (player.Is(CustomRoles.Yapper))
+            Yapper.ResetTimer(player.PlayerId);
         switch (args[0])
         {
             case "/r":

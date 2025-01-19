@@ -1,6 +1,7 @@
 using AmongUs.GameOptions;
 using System;
 using System.Text;
+using System.Timers;
 using TMPro;
 using TOHE.Roles.AddOns.Common;
 using TOHE.Roles.AddOns.Crewmate;
@@ -991,6 +992,12 @@ class MeetingHudStartPatch
         string MimicMsg = "";
         foreach (var pc in Main.AllPlayerControls)
         {
+            if (pc.Is(CustomRoles.Yapper) && !pc.Data.IsDead)
+            {
+                Timer timer = Yapper.YapperTimers[pc.PlayerId];
+                timer.Start();
+                pc.ShowInfoMessage(false, string.Format(Translator.GetRoleString("Yapper_Notify"), Yapper.TimeBetweenTalking.GetInt()));
+            }
             pc?.GetRoleClass()?.OnMeetingHudStart(pc);
             Main.PlayerStates.Do(plr => plr.Value.RoleClass.OnOthersMeetingHudStart(pc));
 

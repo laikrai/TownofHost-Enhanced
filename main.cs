@@ -1009,6 +1009,7 @@ public enum CustomRoles
     VoidBallot,
     Watcher,
     Workhorse,
+    Yapper,
     Youtuber
 }
 //WinData
