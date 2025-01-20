@@ -1141,6 +1141,10 @@ class FixedUpdateInNormalGamePatch
                 player.MarkDirtySettings();
             }
 
+            if (GameStates.IsMeeting && player.Is(CustomRoles.Yapper) && player.IsAlive())
+            {
+                Yapper.UpdateTimer(player.PlayerId);
+            }
 
             if (GameStates.IsInTask && !AntiBlackout.SkipTasks)
             {
