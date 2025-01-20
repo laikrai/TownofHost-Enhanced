@@ -850,6 +850,7 @@ public enum CustomRoles
     Glitch,
     God,
     Hater,
+    Hitman,
     Huntsman,
     Imitator,
     Infectious,
@@ -1108,6 +1109,7 @@ public enum AdditionalWinners
     Quizmaster = CustomRoles.Quizmaster,
     SchrodingersCat = CustomRoles.SchrodingersCat,
     Troller = CustomRoles.Troller,
+    Hitman = CustomRoles.Hitman,
     //   NiceMini = CustomRoles.NiceMini,
     //   Baker = CustomRoles.Baker,
 }

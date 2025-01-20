@@ -387,6 +387,16 @@ class GameEndCheckerForNormal
                             WinnerIds.Add(pc.PlayerId);
                             AdditionalWinnerTeams.Add(AdditionalWinners.Follower);
                             break;
+                        case CustomRoles.Hitman:
+                            if (pc.GetRoleClass() is Hitman hitmanClass)
+                            {
+                                if (hitmanClass.AbilityLimit >= Hitman.HitmanKillsNeeded.GetInt())
+                                {
+                                    WinnerIds.Add(pc.PlayerId);
+                                    AdditionalWinnerTeams.Add(AdditionalWinners.Hitman);
+                                }
+                            }
+                            break;
                     }
                 }
 
