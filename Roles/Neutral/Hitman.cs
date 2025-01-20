@@ -13,7 +13,7 @@ namespace TOHE.Roles.Neutral
     {
         //===========================SETUP================================\\
         public override CustomRoles Role => CustomRoles.Hitman;
-        private const int Id = 31200;
+        private const int Id = 31300;
         public static byte? PlayerId;
         public static bool HasEnabled => PlayerId.HasValue;
         public override CustomRoles ThisRoleBase => CustomRoles.Impostor;
