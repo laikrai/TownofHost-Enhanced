@@ -4134,6 +4134,8 @@
   "ShockerRoomMarked": "Marked Room",
 
   "Yapper_TimeBetweenTalking": "Time Between Talking",
+  "Yapper_ShouldNotifyEveryXSeconds": "Should Notify Every X Seconds",
+  "Yapper_NotifyEveryXSeconds": "Notify Every X Seconds",
   "Yapper_Notify": "You have {0} seconds to talk",
   "Yapper_Died": "{0} died because they didn't talk in time",
 
