@@ -5,10 +5,10 @@ using UnityEngine;
 
 namespace TOHE.Roles.AddOns.Common;
 
-public class Yapper : MonoBehaviour, IAddon
+public class Yapper : IAddon
 {
     public CustomRoles Role => CustomRoles.Yapper;
-    private const int Id = 40000;
+    private const int Id = 31200;
     public static Dictionary<byte, float> timesToTalk = new();
     public AddonTypes Type => AddonTypes.Harmful;
 
