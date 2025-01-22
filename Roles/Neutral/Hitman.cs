@@ -65,17 +65,21 @@ namespace TOHE.Roles.Neutral
         {
             PlayerId = playerId;
             AbilityLimit = 0;
-            Main.AllPlayerKillCooldown[playerId] = 300f;
+            PlayerControl player = Utils.GetPlayerById(playerId);
+            player?.SetKillCooldownV3(300f);
         }
-        public override bool CanUseKillButton(PlayerControl pc) => AbilityLimit >= HitmanKillsNeeded.GetInt() ? HitmanCanGetATargetAfterKillsNeeded.GetBool() ? true : false : true;
+        public static bool HasTarget() => TargetPlayerId != null;
+        public override bool CanUseKillButton(PlayerControl pc) => AbilityLimit < HitmanKillsNeeded.GetInt() ? HasTarget() : HitmanCanGetATargetAfterKillsNeeded.GetBool();
         public override void ApplyGameOptions(IGameOptions opt, byte playerId) => opt.SetVision(HitmanHasImpostorVision.GetBool());
         public override void SetKillCooldown(byte id) => Main.AllPlayerKillCooldown[id] = HitmanKillCooldown.GetFloat();
         public override bool CanUseImpostorVentButton(PlayerControl pc) => HitmanCanVent.GetBool();
         private static byte? SelectClient() => ClientPlayerId = Main.AllAlivePlayerControls.OrderBy(_ => System.Guid.NewGuid()).First().PlayerId;
         public override void OnMeetingHudStart(PlayerControl pc)
         {
+            if (!pc.IsAlive() || (AbilityLimit >= HitmanKillsNeeded.GetInt() && HitmanCanGetATargetAfterKillsNeeded.GetBool()))
+                return;
             ClientPlayerId = SelectClient();
-            while (ClientPlayerId == PlayerId || Utils.GetPlayerById(ClientPlayerId.Value).Data.IsDead)
+            while (ClientPlayerId == PlayerId || !Utils.GetPlayerById(ClientPlayerId.Value).IsAlive())
                 ClientPlayerId = SelectClient();
             TargetPlayerId = null;
             MeetingHudStartPatch.AddMsg(Translator.GetString("HitmanClientSet"),ClientPlayerId.Value,Translator.GetString("HitmanMsgTitle"));
@@ -159,7 +163,7 @@ namespace TOHE.Roles.Neutral
         }
         public override string GetSuffix(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false)
         {
-            if (!HitmanArrowTowardsTarget.GetBool() || isForMeeting || seer.PlayerId != seen.PlayerId || TargetPlayerId == null) return string.Empty;
+            if (!HitmanArrowTowardsTarget.GetBool() || isForMeeting || seer.PlayerId != seen.PlayerId || !HasTarget()) return string.Empty;
 
             return TargetArrow.GetArrows(seer, (byte)TargetPlayerId);
         }
