@@ -2113,7 +2113,7 @@ internal class ChatCommands
         if (player.GetRoleClass() is Exorcist ex && ex.CheckCommand(player, text)) { canceled = true; Logger.Info($"Is Exorcist command", "OnReceiveChat"); return; }
         if (player.GetRoleClass() is Dictator dt && dt.ExilePlayer(player, text)) { canceled = true; Logger.Info($"Is Dictator command", "OnReceiveChat"); return; }
         if (Ritualist.RitualistMsgCheck(player, text)) { canceled = true; Logger.Info($"Is Ritualist command", "OnReceiveChat"); return; }
-        if (Hitman.CheckCommand(player, text)) { Logger.Info($"Is Hitman command", "OnReceiveChat"); return; }
+        if (Hitman.CheckCommand(player, text)) { canceled = true; Logger.Info($"Is Hitman command", "OnReceiveChat"); return; }
 
         Directory.CreateDirectory(modTagsFiles);
         Directory.CreateDirectory(vipTagsFiles);

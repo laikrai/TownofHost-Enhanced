@@ -387,15 +387,9 @@ class GameEndCheckerForNormal
                             WinnerIds.Add(pc.PlayerId);
                             AdditionalWinnerTeams.Add(AdditionalWinners.Follower);
                             break;
-                        case CustomRoles.Hitman:
-                            if (pc.GetRoleClass() is Hitman hitmanClass)
-                            {
-                                if (hitmanClass.AbilityLimit >= Hitman.HitmanKillsNeeded.GetInt())
-                                {
-                                    WinnerIds.Add(pc.PlayerId);
-                                    AdditionalWinnerTeams.Add(AdditionalWinners.Hitman);
-                                }
-                            }
+                        case CustomRoles.Hitman when (pc.IsAlive() || !Hitman.HitmanNeedsToBeAliveToWin.GetBool()) && Main.PlayerStates[pc.PlayerId].RoleClass is Hitman hitman && hitman.AbilityLimit >= Hitman.HitmanKillsNeeded.CurrentValue:
+                            WinnerIds.Add(pc.PlayerId);
+                            AdditionalWinnerTeams.Add(AdditionalWinners.Hitman);
                             break;
                     }
                 }

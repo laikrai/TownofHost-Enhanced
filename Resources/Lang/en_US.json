@@ -4141,6 +4141,7 @@
   "HitmanTargetNotSet": "A target wasn't set for the Hitman. The command is <b>/tg {ID}</b>!",
   "HitmanNotify": "Your target is {0}.",
   "HitmanWrongTarget": "You can't kill non-targets!",
+  "HitmanHasToBeaLiveToWin": "Hitman Has To Be Alive To Win",
 
   "ShockerAbilityCooldown": "Ability Cooldown",
   "ShockerAbilityDuration": "Ability Duration",
@@ -4179,7 +4180,7 @@
   "ExorcismLimitMeeting": "Max exorcises per meeting",
   "ExorcismEndOnKill": "End exorcism on kill",
   "ExorcistTryHideMsg": "Try to hide exorcist's commands",
-  
+
   "PreventSeeRolesBeforeSkillUsedUp": "Prevent seeing others roles before skill used up",
 
   "ChiefOfPoliceSkillCooldown": "Cooldown for recruiting <color=#ffb347>Sheriffs</color>",

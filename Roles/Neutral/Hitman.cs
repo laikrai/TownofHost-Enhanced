@@ -26,6 +26,7 @@ namespace TOHE.Roles.Neutral
         private static OptionItem HitmanArrowTowardsTarget;
         public static OptionItem HitmanKillsNeeded;
         private static OptionItem HitmanCanGetATargetAfterKillsNeeded;
+        public static OptionItem HitmanNeedsToBeAliveToWin;
         private static OptionItem TryHideMsg;
 
         public static byte? ClientPlayerId;
@@ -47,7 +48,9 @@ namespace TOHE.Roles.Neutral
                 .SetParent(Options.CustomRoleSpawnChances[CustomRoles.Hitman]);
             HitmanCanGetATargetAfterKillsNeeded = BooleanOptionItem.Create(Id + 8, "HitmanCanGetATargetAfterKillsNeeded", true, TabGroup.NeutralRoles, false)
                 .SetParent(Options.CustomRoleSpawnChances[CustomRoles.Hitman]);
-            TryHideMsg = BooleanOptionItem.Create(Id + 9, "HitmanTryHideMsg", true, TabGroup.NeutralRoles, false)
+            HitmanNeedsToBeAliveToWin = BooleanOptionItem.Create(Id + 9, "HitmanHasToBeaLiveToWin", true, TabGroup.NeutralRoles, false)
+                .SetParent(Options.CustomRoleSpawnChances[CustomRoles.Hitman]);
+            TryHideMsg = BooleanOptionItem.Create(Id + 10, "HitmanTryHideMsg", true, TabGroup.NeutralRoles, false)
                 .SetParent(Options.CustomRoleSpawnChances[CustomRoles.Hitman])
                 .SetColor(Color.green);
 
@@ -117,14 +120,7 @@ namespace TOHE.Roles.Neutral
             }
             AbilityLimit++;
             SendSkillRPC();
-            GetProgressText(PlayerId.Value, false);
             TargetArrow.RemoveAllTarget(PlayerId.Value);
-            if (AbilityLimit >= HitmanKillsNeeded.CurrentValue)
-            {
-                CustomWinnerHolder.AdditionalWinnerTeams.Add(AdditionalWinners.Hitman);
-                CustomWinnerHolder.WinnerIds.Add(PlayerId.Value);
-            }
-            Main.AllPlayerKillCooldown[PlayerId.Value] = 300f;
             return true;
         }
         public static bool CheckCommand(PlayerControl player, string msg, bool isUI = false)
@@ -149,18 +145,23 @@ namespace TOHE.Roles.Neutral
                             GuessManager.TryHideMsg();
                         player.ShowInfoMessage(isUI, string.Format(Translator.GetString("HitmanTargetSet"), Utils.GetPlayerById(targetId).name.RemoveHtmlTags()), Translator.GetString("HitmanMsgTitle"));
                         TargetPlayerId = targetId;
-                        return true;
                     }
                     else
                     {
                         if (TryHideMsg.GetBool())
                             GuessManager.TryHideMsg();
                         player.ShowInfoMessage(isUI, Translator.GetString("HitmanTargetNotSet"));
-                        return true;
                     }
+                    return true;
                 }
             }
             return false;
+        }
+        public override string GetSuffix(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false)
+        {
+            if (!HitmanArrowTowardsTarget.GetBool() || isForMeeting || seer.PlayerId != seen.PlayerId || TargetPlayerId == null) return string.Empty;
+
+            return TargetArrow.GetArrows(seer, (byte)TargetPlayerId);
         }
     }
 }
