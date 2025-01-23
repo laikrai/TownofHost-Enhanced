@@ -68,7 +68,7 @@ namespace TOHE.Roles.Neutral
             PlayerControl player = Utils.GetPlayerById(playerId);
             player?.SetKillCooldownV3(300f);
         }
-        public static bool HasTarget() => TargetPlayerId != null;
+        public static bool HasTarget() => TargetPlayerId != null && Utils.GetPlayerById(TargetPlayerId.Value).IsAlive();
         public override bool CanUseKillButton(PlayerControl pc) => AbilityLimit < HitmanKillsNeeded.GetInt() ? HasTarget() : HitmanCanGetATargetAfterKillsNeeded.GetBool();
         public override void ApplyGameOptions(IGameOptions opt, byte playerId) => opt.SetVision(HitmanHasImpostorVision.GetBool());
         public override void SetKillCooldown(byte id) => Main.AllPlayerKillCooldown[id] = HitmanKillCooldown.GetFloat();

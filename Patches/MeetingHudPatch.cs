@@ -992,7 +992,7 @@ class MeetingHudStartPatch
         foreach (var pc in Main.AllPlayerControls)
         {
             // Yapper notify
-            if (pc.Is(CustomRoles.Yapper))
+            if (pc.Is(CustomRoles.Yapper) && pc.IsAlive())
             {
                 Yapper.ResetTimer(pc.PlayerId);
                 AddMsg(string.Format(GetString("Yapper_Notify"), Yapper.TimeBetweenTalking.GetFloat()), pc.PlayerId, ColorString(GetRoleColor(CustomRoles.Yapper), GetString("Yapper")));
